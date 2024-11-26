@@ -138,7 +138,37 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 // associate a given bounding box with the keypoints it contains
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
-    // ...
+    std::vector<cv::DMatch> validMatches;
+    std::vector<double> distances;
+
+    // Step 1: Filter matches based on ROI
+    for (const auto &match : kptMatches) {
+        const auto &prevPt = kptsPrev[match.queryIdx].pt; // Keypoint in previous frame
+        const auto &currPt = kptsCurr[match.trainIdx].pt; // Keypoint in current frame
+
+        if (boundingBox.roi.contains(currPt)) {
+            validMatches.push_back(match);
+            distances.push_back(cv::norm(currPt - prevPt));
+        }
+    }
+
+    // Step 2: Compute robust mean and remove outliers
+    if (!distances.empty()) {
+        double meanDist = std::accumulate(distances.begin(), distances.end(), 0.0) / distances.size();
+        double distSum = 0.0;
+        for (double d : distances) {
+            distSum += (d - meanDist) * (d - meanDist);
+        }
+        double stddev = std::sqrt(distSum / distances.size());
+        std::cout << "CAMERA: Extracted mean=" <<  std::to_string(meanDist) << ", stddev=" << std::to_string(stddev) << ".\n";
+
+        // Keep matches with distance within standard deviations
+        for (size_t i = 0; i < validMatches.size(); ++i) {
+            if (std::fabs(distances[i] - meanDist) <=  1.5 * stddev) {
+                boundingBox.kptMatches.push_back(validMatches[i]);
+            }
+        }
+    }
 }
 
 
@@ -146,7 +176,44 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
                       std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC, cv::Mat *visImg)
 {
-    // ...
+    std::vector<double> ratios;
+
+    // Step 1: Compute distance ratios between keypoints
+    for (size_t i = 0; i < kptMatches.size(); ++i) {
+        const cv::KeyPoint &kpOuterPrev = kptsPrev[kptMatches[i].queryIdx];
+        const cv::KeyPoint &kpOuterCurr = kptsCurr[kptMatches[i].trainIdx];
+
+        for (size_t j = i + 1; j < kptMatches.size(); ++j) {
+            const cv::KeyPoint &kpInnerPrev = kptsPrev[kptMatches[j].queryIdx];
+            const cv::KeyPoint &kpInnerCurr = kptsCurr[kptMatches[j].trainIdx];
+
+            // Compute distances
+            double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
+            double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
+
+            // Avoid division by zero
+            if (distPrev > 1e-6 && distCurr > 1e-6) {
+                double ratio = distCurr / distPrev;
+                ratios.push_back(ratio);
+            }
+        }
+    }
+
+    // Step 2: Handle outliers using the median of ratios
+    if (ratios.empty()) {
+        TTC = NAN;
+        return;
+    }
+
+    std::nth_element(ratios.begin(), ratios.begin() + ratios.size() / 2, ratios.end());
+    double medianRatio = ratios[ratios.size() / 2];
+
+    // Step 3: Compute TTC
+    if (medianRatio <= 1e-6) {
+        TTC = NAN; // Avoid invalid TTC
+    } else {
+        TTC = -1.0 / (frameRate * (1.0 - medianRatio));
+    }
 }
 
 
