@@ -159,20 +159,20 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
 {
-    // Map to store the counts of keypoint matches between bounding box pairs
+    // map to store the counts of keypoint matches between bounding box pairs
     std::map<std::pair<int, int>, int> bbMatchCounts;
 
-    // Iterate over all keypoint matches
+    // for all keypoint matches
     for (const auto &match : matches) 
     {
-        // Get the indices of the matched keypoints
-        int prevIdx = match.queryIdx; // keypoint index in the previous frame
-        int currIdx = match.trainIdx; // keypoint index in the current frame
+        // indices of the matched keypoints
+        int prevIdx = match.queryIdx; 
+        int currIdx = match.trainIdx; 
 
-        // Initialize variables to store the bounding box IDs for the matched keypoints
+        // store the bounding box IDs for the matched keypoints
         std::vector<int> prevBBIds, currBBIds;
 
-        // Check which bounding boxes in the previous frame contain the keypoint
+        // which bounding boxes in the previous frame contain the keypoint
         for (const auto &prevBB : prevFrame.boundingBoxes) 
         {
             if (prevBB.roi.contains(prevFrame.keypoints[prevIdx].pt)) 
@@ -181,7 +181,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
             }
         }
 
-        // Check which bounding boxes in the current frame contain the keypoint
+        // which bounding boxes in the current frame contain the keypoint
         for (const auto &currBB : currFrame.boundingBoxes) 
         {
             if (currBB.roi.contains(currFrame.keypoints[currIdx].pt)) 
@@ -190,7 +190,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
             }
         }
 
-        // Increment match counts for all valid bounding box pairs
+        // inc match counts for all valid bounding box pairs
         for (int prevBBId : prevBBIds) 
         {
             for (int currBBId : currBBIds) 
@@ -200,8 +200,8 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
         }
     }
 
-    // Identify the best matches
-    std::map<int, int> bestMatches; // Temporary map to store the best match for each previous bounding box
+    // id the best matches
+    std::map<int, int> bestMatches; // tmp map to store the best match for each previous bounding box
     for (const auto &prevBB : prevFrame.boundingBoxes) 
     {
         int prevBBId = prevBB.boxID;
