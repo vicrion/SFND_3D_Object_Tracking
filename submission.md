@@ -34,8 +34,8 @@ Outliers:
 
 Observations:
 
-* `median()` function takes care of poin clouds data outliers, so the average distance seems to be calculated correctly when compared to manual distance computation (from bird eye view LIDAR visualization).
-* The possible explanation is likely to be related to the chosen **velocity model** which is an approximation to the relative velocity changes
+* `median()` function takes care of point clouds data outliers, so the average distance seems to be calculated correctly when compared to manual distance computation (from bird eye view LIDAR visualization).
+* The possible explanation is likely to be related to the chosen **velocity model** which is an approximation to the relative velocity changes.
 * Generally, LIDAR measurements present a reliable source for TTC estimation even when using the velocity model.
 
 ## FP.6 : Performance Evaluation 2
@@ -43,3 +43,8 @@ Observations:
 This last exercise is about running the different detector / descriptor combinations and looking at the differences in TTC estimation. Find out which methods perform best and also include several examples where camera-based TTC estimation is way off. As with Lidar, describe your observations again and also look into potential reasons. This is the last task in the final project.
 
 The task is complete once all detector / descriptor combinations implemented in previous chapters have been compared with regard to the TTC estimate on a frame-by-frame basis. To facilitate the comparison, a spreadsheet and graph should be used to represent the different TTCs.
+
+All data observations:
+
+| Detector | Descriptor | TTC |
+| --- | --- | --- | 
