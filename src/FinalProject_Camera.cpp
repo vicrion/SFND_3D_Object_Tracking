@@ -75,7 +75,7 @@ int main(int argc, const char *argv[])
     bool bVis = false;            // visualize results
 
     /* MAIN LOOP OVER ALL IMAGES */
-    std::vector<double> ttcCameraVec;
+    std::vector<double> ttcCameraVec, ttcLidarVec;
     for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex; imgIndex+=imgStepWidth)
     {
         /* LOAD IMAGE INTO BUFFER */
@@ -146,7 +146,7 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "HARRIS";
+        string detectorType = "BRISK";
 
         if (detectorType.compare("SHITOMASI") == 0)
         {
@@ -253,6 +253,7 @@ int main(int argc, const char *argv[])
                     //// TASK FP.2 -> compute time-to-collision based on Lidar data (implement -> computeTTCLidar)
                     double ttcLidar; 
                     computeTTCLidar(prevBB->lidarPoints, currBB->lidarPoints, sensorFrameRate, ttcLidar);
+                    ttcLidarVec.push_back(ttcLidar);
                     //// EOF STUDENT ASSIGNMENT
 
                     //// STUDENT ASSIGNMENT
@@ -290,6 +291,12 @@ int main(int argc, const char *argv[])
         }
 
     } // eof loop over all images
+
+    std::cout << "LIDAR TTC all: \n[";
+    for (auto v : ttcLidarVec){
+        std::cout << std::fixed << std::setprecision(2) << v << ", "; 
+    }
+    std::cout << "]\n";
 
     std::cout << "CAMERA TTC all: \n[";
     for (auto v : ttcCameraVec){
