@@ -220,20 +220,6 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
-    auto median = [](const std::vector<double> &distances) {
-        size_t size = distances.size();
-        if (size == 0)
-            return 0.0;
-        std::vector<double> sortedDistances = distances;
-        std::nth_element(sortedDistances.begin(), sortedDistances.begin() + size / 2, sortedDistances.end());
-        double median = sortedDistances[size / 2];
-        if (size % 2 == 0) { // Even number of elements
-            std::nth_element(sortedDistances.begin(), sortedDistances.begin() + (size / 2 - 1), sortedDistances.end());
-            median = (median + sortedDistances[size / 2 - 1]) / 2.0;
-        }
-        return median;
-    };
-
     // lidar distances for the closest points in X direction (object in front)
     std::vector<double> prevDistances, currDistances;
     for (const auto &point : lidarPointsPrev) {
@@ -245,18 +231,20 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
             currDistances.push_back(point.x);
     }
 
-    // Ensure we have enough points for both frames
     if (prevDistances.empty() || currDistances.empty()) {
         TTC = NAN;
         std::cerr << "Warning: Not enough Lidar points to compute TTC." << std::endl;
         return;
     }
 
-    // Compute the median distances
-    double d0 = median(prevDistances); // Median distance in the previous frame
-    double d1 = median(currDistances); // Median distance in the current frame
+    // median distances
+    std::nth_element(prevDistances.begin(), prevDistances.begin() + prevDistances.size() / 2, prevDistances.end());
+    double d0 = prevDistances[prevDistances.size() / 2];
 
-    // Avoid division by zero or invalid TTC values
+    std::nth_element(currDistances.begin(), currDistances.begin() + currDistances.size() / 2, currDistances.end());
+    double d1 = currDistances[currDistances.size() / 2];
+
+    // division by zero or invalid TTC values
     if (d0 <= 0 || d1 <= 0 || std::fabs(d0 - d1) < 1e-6) {
         TTC = NAN;
         std::cerr << "Warning: Invalid Lidar distances to compute TTC." << std::endl;
@@ -265,6 +253,8 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 
     // TTC using constant velocity model
     TTC = d1 / (frameRate * (d0 - d1));
+
+    std::cout << "LIDAR: median(prev)=" << std::to_string(d0) << ", median(curr)=" << std::to_string(d1) << ", TTC=" << std::to_string(TTC) << "\n";
 }
 
 
