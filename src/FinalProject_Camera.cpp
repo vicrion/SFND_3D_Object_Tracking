@@ -146,7 +146,7 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "SIFT";
+        string detectorType = "HARRIS";
 
         if (detectorType.compare("SHITOMASI") == 0)
         {
