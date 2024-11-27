@@ -48,3 +48,9 @@ All data observations:
 
 | Detector | Descriptor | TTC |
 | --- | --- | --- | 
+| BRISK | BRISK | `[13.70, 25.27, 16.41, 17.22, 21.82, 18.82, 15.68, 15.78, 15.46, 13.55, 11.06, 12.09, 12.29, 12.20, 12.79, 11.44, 9.35, 11.90]` | 
+| BRISK | BRIEF | 0 |
+| BRISK | ORB | 0 |
+| BRISK | FREAK | 0 |
+| BRISK | AKAZE | 0 |
+| BRISK | SIFT | 0 |

@@ -75,7 +75,7 @@ int main(int argc, const char *argv[])
     bool bVis = false;            // visualize results
 
     /* MAIN LOOP OVER ALL IMAGES */
-
+    std::vector<double> ttcCameraVec;
     for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex; imgIndex+=imgStepWidth)
     {
         /* LOAD IMAGE INTO BUFFER */
@@ -132,7 +132,7 @@ int main(int argc, const char *argv[])
         bVis = true;
         if(bVis)
         {
-            show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(750, 750), true);
+            show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(750, 750), false);
         }
         bVis = false;
 
@@ -146,7 +146,7 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "ORB";
+        string detectorType = "BRISK";
 
         if (detectorType.compare("SHITOMASI") == 0)
         {
@@ -261,6 +261,8 @@ int main(int argc, const char *argv[])
                     double ttcCamera;
                     clusterKptMatchesWithROI(*currBB, (dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->kptMatches);                    
                     computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
+                    ttcCameraVec.push_back(ttcCamera);
+
                     //// EOF STUDENT ASSIGNMENT
 
                     bVis = true;
@@ -277,8 +279,8 @@ int main(int argc, const char *argv[])
                         string windowName = "Final Results : TTC";
                         cv::namedWindow(windowName, 4);
                         cv::imshow(windowName, visImg);
-                        cout << "Press key to continue to next frame" << endl;
-                        cv::waitKey(0);
+                        cout << "Press key to continue to next frame. \n-------------\n" << endl;
+                        // cv::waitKey(0);
                     }
                     bVis = false;
 
@@ -288,6 +290,12 @@ int main(int argc, const char *argv[])
         }
 
     } // eof loop over all images
+
+    std::cout << "CAMERA TTC all: \n[";
+    for (auto v : ttcCameraVec){
+        std::cout << std::fixed << std::setprecision(2) << v << ", "; 
+    }
+    std::cout << "]\n";
 
     return 0;
 }

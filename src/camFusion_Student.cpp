@@ -141,7 +141,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     std::vector<cv::DMatch> validMatches;
     std::vector<double> distances;
 
-    // Step 1: Filter matches based on ROI
+    // filter matches based on ROI
     for (const auto &match : kptMatches) {
         const auto &prevPt = kptsPrev[match.queryIdx].pt; // Keypoint in previous frame
         const auto &currPt = kptsCurr[match.trainIdx].pt; // Keypoint in current frame
@@ -152,7 +152,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
         }
     }
 
-    // Step 2: Compute robust mean and remove outliers
+    // compute robust mean and remove outliers
     if (!distances.empty()) {
         double meanDist = std::accumulate(distances.begin(), distances.end(), 0.0) / distances.size();
         double distSum = 0.0;
@@ -201,6 +201,7 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
 
     // Step 2: Handle outliers using the median of ratios
     if (ratios.empty()) {
+        std::cerr << "A set of ratios is empty.\n";
         TTC = NAN;
         return;
     }
@@ -211,9 +212,13 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     // Step 3: Compute TTC
     if (medianRatio <= 1e-6) {
         TTC = NAN; // Avoid invalid TTC
-    } else {
-        TTC = -1.0 / (frameRate * (1.0 - medianRatio));
-    }
+        std::cerr << "Median ration is too small.\n";
+        return;
+    } 
+    
+    TTC = -1.0 / (frameRate * (1.0 - medianRatio));
+
+    std::cout << "CAMERA: num ratios=" << std::to_string(ratios.size()) << ", median(ratio)=" << std::to_string(medianRatio) << ", TTC=" << std::to_string(TTC) << "\n";
 }
 
 
