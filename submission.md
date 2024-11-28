@@ -80,9 +80,9 @@ All data observations:
 | FAST | AKAZE | - |
 | FAST | SIFT | `[15.52, 11.38, 15.26, 38.28, 15.83, 13.41, 12.87, 13.99, 14.62, 16.55, 12.20, 11.87, 11.93, 10.91, 10.37, 9.93, 9.95, 10.25, ]` |
 
-
-* The ratio is `1` signifies there will never be collision (TTC = `inf`).
-* When compared to manual estimate (distance), ...
+Outliers: 
+* When the ratio is `1`, it signifies there will never be collision (TTC = `inf`), or values can get pretty large for when vehicles move in similar velocities. 
+* Potential reason: the ratio is a small difference and even small deviations create a large impact on the TTC estimation. Relying on ration requires highest possible precision when it comes to feature calculation. It is much safer to rely on LIDAR for exact this reason as the distance measurements are ingrained into pointcloud data nature.
 
 Performance summary:
 
