@@ -1,5 +1,12 @@
 # Camera vs. Lidar TTC
 
+## Code references for tasks 1-4
+
+* FP.1 Match 3D Objects: L266 of `camFusion_Student.cpp`.
+* FP.2 Compute Lidar-based TTC: L225 of `camFusion_Student.cpp`.
+* FP.3 Associate Keypoint Correspondences with Bounding Boxes: L139 of `camFusion_Student.cpp`.
+* FP.4 Compute Camera-based TTC: L176 of `FP.4 Compute Camera-based TTC`.
+
 ## FP.5 : Performance Evaluation 1
 
 Examples where the Lidar-based TTC estimate is way off - observations and argumentation.
