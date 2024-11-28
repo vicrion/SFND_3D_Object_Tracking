@@ -89,4 +89,4 @@ Performance summary:
 * SIFT-SIFT provided the best performance among all the detectors-descriptors pairs.
 * Other best performing pairs are: FAST-FREAK and most of AKAZE-* pairs.
 
-[!plot](performance.png)
+![plot](performance.png)
