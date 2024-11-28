@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
 add_definitions(-std=c++11)
 
@@ -16,3 +16,6 @@ add_definitions(${OpenCV_DEFINITIONS})
 # Executable for create matrix exercise
 add_executable (3D_object_tracking src/camFusion_Student.cpp src/FinalProject_Camera.cpp src/lidarData.cpp src/matching2D_Student.cpp src/objectDetection2D.cpp)
 target_link_libraries (3D_object_tracking ${OpenCV_LIBRARIES})
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/images/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/dat/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/dat/)
