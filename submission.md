@@ -83,3 +83,10 @@ All data observations:
 
 * The ratio is `1` signifies there will never be collision (TTC = `inf`).
 * When compared to manual estimate (distance), ...
+
+Performance summary:
+
+* SIFT-SIFT provided the best performance among all the detectors-descriptors pairs.
+* Other best performing pairs are: FAST-FREAK and most of AKAZE-* pairs.
+
+[!plot](./performance.png)
