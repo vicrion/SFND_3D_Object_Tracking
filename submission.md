@@ -40,10 +40,6 @@ Observations:
 
 ## FP.6 : Performance Evaluation 2
 
-This last exercise is about running the different detector / descriptor combinations and looking at the differences in TTC estimation. Find out which methods perform best and also include several examples where camera-based TTC estimation is way off. As with Lidar, describe your observations again and also look into potential reasons. This is the last task in the final project.
-
-The task is complete once all detector / descriptor combinations implemented in previous chapters have been compared with regard to the TTC estimate on a frame-by-frame basis. To facilitate the comparison, a spreadsheet and graph should be used to represent the different TTCs.
-
 All data observations:
 
 | Detector | Descriptor | TTC |
@@ -81,6 +77,7 @@ All data observations:
 | FAST | SIFT | `[15.52, 11.38, 15.26, 38.28, 15.83, 13.41, 12.87, 13.99, 14.62, 16.55, 12.20, 11.87, 11.93, 10.91, 10.37, 9.93, 9.95, 10.25, ]` |
 
 Outliers: 
+
 * When the ratio is `1`, it signifies there will never be collision (TTC = `inf`), or values can get pretty large for when vehicles move in similar velocities. 
 * Potential reason: the ratio is a small difference and even small deviations create a large impact on the TTC estimation. Relying on ration requires highest possible precision when it comes to feature calculation. It is much safer to rely on LIDAR for exact this reason as the distance measurements are ingrained into pointcloud data nature.
 
@@ -88,5 +85,7 @@ Performance summary:
 
 * SIFT-SIFT provided the best performance among all the detectors-descriptors pairs.
 * Other best performing pairs are: FAST-FREAK and most of AKAZE-* pairs.
+
+Selected best performing pairs vs. TTC of LIDAR:
 
 ![plot](performance.png)
